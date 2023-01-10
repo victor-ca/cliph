@@ -3,11 +3,11 @@ import { SummaryStatistic } from "../model/salary-statistic";
 
 export type StatisticByDepartment = {
   department: string;
-  statistic: SummaryStatistic;
+  statistics: SummaryStatistic;
 };
 export type StatisticBySubDepartment = {
   sub_department: string;
-  statistic: SummaryStatistic;
+  statistics: SummaryStatistic;
 };
 
 export type StatisticByDepartmentAndSubDepartment = {

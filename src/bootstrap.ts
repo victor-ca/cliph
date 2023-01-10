@@ -2,11 +2,7 @@ import express, { Express, Request, Response } from "express";
 import { EmployeeRepo } from "./lib/employee.repo";
 import { allowedCurrencies, Employee } from "./model/employee";
 
-export const bootstrap = ({
-  repo,
-}: {
-  repo: EmployeeRepo;
-}): express.Express => {
+export const bootstrap = ({ repo }: { repo: EmployeeRepo }): Express => {
   const app: Express = express();
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
@@ -35,10 +31,10 @@ export const bootstrap = ({
     const on_contract = !!on_contractStr;
     const errors: (undefined | string | boolean)[] = [
       !allowedCurrencies.includes(currency) &&
-        `bad currency: ${currency || "none"}`,
+        `invalid currency: ${currency || "none"}`,
       !department && "department is required",
       !name && "name is required",
-      (salary <= 0 || salary > 10000000) && `bad salary: ${salary || "0"}`,
+      (salary <= 0 || salary > 10000000) && `invalid salary: ${salary || "0"}`,
       !sub_department && "sub_department is required",
     ].filter((x) => !!x);
 

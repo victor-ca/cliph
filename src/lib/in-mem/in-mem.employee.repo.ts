@@ -98,7 +98,7 @@ const getStatistics = (data: Employee[]): SummaryStatistic => {
 
 type GroupedStatistic<K extends string> = Array<
   { [key in K]: string } & {
-    statistic: SummaryStatistic;
+    statistics: SummaryStatistic;
   }
 >;
 
@@ -109,7 +109,7 @@ const groupToArrayAndGetStatisticsSummary = <K extends keyof Employee>(
   const grouped = groupBy(data, (x) => x[key]);
   const asArray = Object.entries(grouped).map(([group, data]) => ({
     [key]: group,
-    statistic: getStatistics(data),
+    statistics: getStatistics(data),
   }));
 
   return asArray as GroupedStatistic<K>;
