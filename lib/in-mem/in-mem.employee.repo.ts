@@ -9,6 +9,7 @@ import { groupBy } from "lodash";
 const defaultDataSet = (require("./dataset.json") as Employee[]).map((x) => ({
   ...x,
   salary: +x.salary,
+  on_contract: !!x.on_contract,
 }));
 export class InMemoryRepo implements EmployeeRepo {
   #data: Employee[];
@@ -51,7 +52,7 @@ export class InMemoryRepo implements EmployeeRepo {
   deleteRecord(name: string): Promise<Employee> {
     const index = this._getIndex(name);
     if (index < 0) {
-      throw new Error(`An employee named ${name} was not found`);
+      Promise.reject(new Error(`An employee named ${name} was not found`));
     }
 
     const employee = this.#data[index];
