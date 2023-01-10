@@ -7,10 +7,15 @@ import {
 } from "../employee.repo";
 import { groupBy } from "lodash";
 import { defaultDataSet } from "./dataset";
+const normalizedDataset = (defaultDataSet as Employee[]).map((e: Employee) => ({
+  ...e,
+  salary: +e.salary,
+  on_contract: !!e.on_contract,
+}));
 
 export class InMemoryRepo implements EmployeeRepo {
   #data: Employee[];
-  constructor(initialData: Employee[] = defaultDataSet) {
+  constructor(initialData: Employee[] = normalizedDataset) {
     this.#data = initialData;
   }
   getSalaryStatisticsPerDepartment(): Promise<StatisticByDepartment[]> {

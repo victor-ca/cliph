@@ -14,14 +14,24 @@
       }
     </style>
     <script>
-      window.deleteUserByName = (name) => {
+      window.deleteUserByName = (useAuth) => {
         var name = document.getElementById("empToDelete").value;
+        var authHeaders = useAuth
+          ? {
+              authorization: "dummy",
+            }
+          : {};
+
         fetch("/employees/" + name, {
           method: "DELETE",
-        })
-          .then((res) => res.json())
-          .then((who) => alert("deleted" + JSON.stringify(who, null, 2)))
-          .catch(() => alert("delete failed"));
+          headers: authHeaders,
+        }).then((res) => {
+          if (res.status === 200) {
+            res.json().then((user) => alert(JSON.stringify(user, null, 2)));
+            return;
+          }
+          alert("delete failed with code: " + res.status);
+        });
       };
     </script>
   </head>
@@ -32,7 +42,7 @@
     <a href="/statistics/by-dept">Dept</a> |
     <a href="/statistics/by-dept-and-sub-dept">By Dept and Sub-dept</a>
     <hr />
-    <h1>Add Employee</h1>
+    <h2>Add Employee</h2>
     <form action="/employees" method="post">
       <label>
         Name
@@ -62,12 +72,17 @@
     </form>
     <hr />
 
-    <h2>Delete</h2>
+    <h2>Delete Employee</h2>
 
     <label>
       Name
       <input id="empToDelete" type="text" name="name" />
-      <button onclick="window.deleteUserByName()">Delete</button>
+      <button onclick="window.deleteUserByName(true)">
+        Delete (authenticated)
+      </button>
+      <button onclick="window.deleteUserByName(false)">
+        Delete (un-authenticated)
+      </button>
     </label>
   </body>
 </html>

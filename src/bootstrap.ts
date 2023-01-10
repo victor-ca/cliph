@@ -2,21 +2,35 @@ import express, { Express, Request, Response } from "express";
 import { EmployeeRepo } from "./lib/employee.repo";
 import { allowedCurrencies, Employee } from "./model/employee";
 
+const dummyAuthentication = (req: Request, res: Response, next: any) => {
+  const auth = req.headers.authorization;
+  if (auth === "dummy") {
+    next();
+  } else {
+    res.status(401);
+    res.send("Access forbidden");
+  }
+};
+
 export const bootstrap = ({ repo }: { repo: EmployeeRepo }): Express => {
   const app: Express = express();
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(express.static("public"));
 
-  app.delete("/employees/:employeeName", (req: Request, res: Response) => {
-    repo
-      .deleteRecord(req.params.employeeName)
-      .then((emp) => res.send(emp))
-      .catch(() => {
-        res.statusCode = 500;
-        res.send({ error: "delete failed" });
-      });
-  });
+  app.delete(
+    "/employees/:employeeName",
+    dummyAuthentication,
+    (req: Request, res: Response) => {
+      repo
+        .deleteRecord(req.params.employeeName)
+        .then((emp) => res.send(emp))
+        .catch(() => {
+          res.statusCode = 500;
+          res.send({ error: "delete failed" });
+        });
+    }
+  );
 
   app.post("/employees", async (req: Request, res: Response) => {
     const {
@@ -27,8 +41,11 @@ export const bootstrap = ({ repo }: { repo: EmployeeRepo }): Express => {
       sub_department,
       on_contract: on_contractStr,
     } = req.body as Employee;
+
     const salary = +salaryStr;
+
     const on_contract = !!on_contractStr;
+
     const errors: (undefined | string | boolean)[] = [
       !allowedCurrencies.includes(currency) &&
         `invalid currency: ${currency || "none"}`,
@@ -78,5 +95,6 @@ export const bootstrap = ({ repo }: { repo: EmployeeRepo }): Express => {
       res.send(data);
     }
   );
+
   return app;
 };
