@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      html {
+        max-width: 70ch;
+        padding: 3em 1em;
+        margin: auto;
+        line-height: 1.75;
+        font-size: 1.25em;
+      }
+      label {
+        display: block;
+      }
+    </style>
+    <script>
+      window.deleteUserByName = (name) => {
+        var name = document.getElementById("empToDelete").value;
+        fetch("/employees/" + name, {
+          method: "DELETE",
+        })
+          .then((res) => res.json())
+          .then((who) => alert("deleted" + JSON.stringify(who, null, 2)))
+          .catch(() => alert("delete failed"));
+      };
+    </script>
+  </head>
+  <body>
+    <h2>Statistics</h2>
+    <a href="/statistics">Overall</a> |
+    <a href="/statistics/contractors">Contractors</a> |
+    <a href="/statistics/by-dept">Dept</a> |
+    <a href="/statistics/by-dept-and-sub-dept">By Dept and Sub-dept</a>
+    <hr />
+    <h1>Add Employee</h1>
+    <form action="/employees" method="post">
+      <label>
+        Name
+        <input type="text" name="name" value="John" />
+      </label>
+      <label>
+        Salary
+        <input type="text" name="salary" value="10000" />
+      </label>
+      <label>
+        Currency
+        <input value="EUR" type="text" name="currency" />
+      </label>
+      <label>
+        Department
+        <input type="text" name="department" value="test" />
+      </label>
+      <label>
+        Sub Department
+        <input type="text" name="sub_department" value="sub-test" />
+      </label>
+      <label>
+        On Contract
+        <input type="checkbox" name="on_contract" checked="true" />
+      </label>
+      <button type="submit">Add</button>
+    </form>
+    <hr />
+
+    <h2>Delete</h2>
+
+    <label>
+      Name
+      <input id="empToDelete" type="text" name="name" />
+      <button onclick="window.deleteUserByName()">Delete</button>
+    </label>
+  </body>
+</html>
